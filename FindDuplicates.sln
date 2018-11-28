@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindDuplicates", "FindDuplicates\FindDuplicates.csproj", "{7FEFA4C7-D882-495C-98A2-3CCFCCCDC63E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindDuplicates.Console", "FindDuplicates.Console\FindDuplicates.Console.csproj", "{8F775B3A-B2B2-4ACF-8200-94C52E00554F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7FEFA4C7-D882-495C-98A2-3CCFCCCDC63E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FEFA4C7-D882-495C-98A2-3CCFCCCDC63E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FEFA4C7-D882-495C-98A2-3CCFCCCDC63E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F775B3A-B2B2-4ACF-8200-94C52E00554F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F775B3A-B2B2-4ACF-8200-94C52E00554F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F775B3A-B2B2-4ACF-8200-94C52E00554F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F775B3A-B2B2-4ACF-8200-94C52E00554F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
