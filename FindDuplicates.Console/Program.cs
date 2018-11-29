@@ -20,7 +20,6 @@ namespace FindDuplicates.Console
             var totalTimeStopwatch = Stopwatch.StartNew();
 
             //// Load files
-            /// 
             var loadFileStopWatch = Stopwatch.StartNew();
 
             Console.WriteLine($"Loading file data...");
@@ -29,8 +28,8 @@ namespace FindDuplicates.Console
             //var rawFiles = loader.LoadAllFiles(@"C:\projects\linux\drivers", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase)).ToArray();
 
             var loader = new AsyncFileLoader();
-            //var rawFiles = loader.LoadAllFilesAsync(@"C:\projects\linux\drivers", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10).GetAwaiter().GetResult().ToArray();
-            var rawFiles = loader.LoadAllFilesAsync(@"C:\projects\linux\drivers", filename => filename.EndsWith("acard-ahci.c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10).GetAwaiter().GetResult().ToArray();
+            var rawFiles = loader.LoadAllFilesAsync(@"C:\projects\linux", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10).GetAwaiter().GetResult().ToArray();
+            //var rawFiles = loader.LoadAllFilesAsync(@"C:\projects\linux", filename => filename.EndsWith("acard-ahci.c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10).GetAwaiter().GetResult().ToArray();
 
             //var rawFiles = loader.LoadFilesAsync(1, @"C:\projects\linux\drivers\video\fbdev\omap2\omapfb\omapfb-main.c").GetAwaiter().GetResult().ToArray();
 
@@ -41,37 +40,22 @@ namespace FindDuplicates.Console
             Console.WriteLine($"{rawFiles.Length} files loaded into memory");
             Console.WriteLine($"Loading files took {loadFileStopWatch.ElapsedMilliseconds}ms");
 
-            //// Parse files
-            var parser = new CParser();
-
             //rawFiles = rawFiles.Where(rf => rf.FullPath.EndsWith("acard-ahci.c", StringComparison.OrdinalIgnoreCase)).ToArray();
             //var filesToProcess = rawFiles.Take(5000).ToArray();
+
             var filesToProcess = rawFiles.ToArray();
 
             Console.WriteLine($"Processing files to statements from {filesToProcess.Length} files...");
 
             var toStatementsStopwatch = Stopwatch.StartNew();
 
-            var sourceFiles = new ConcurrentBag<SourceFile>();
+            var fileParser = new FileParser();
 
-            foreach (var rawFile in filesToProcess)
-            {
-                try
-                {
-                    var sourceFile = parser.Parse(rawFile);
-                   sourceFiles.Add(sourceFile);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(rawFile.FullPath + " failed:" + e);
-                    throw;
-                }
-            }
+            var sourceFiles = fileParser.ParseFiles(filesToProcess);
 
             Console.WriteLine($"Processing files to statements done after {toStatementsStopwatch.ElapsedMilliseconds}ms ...");
 
             //// Find duplicates
-
 
             var findDuplicatesTimer = Stopwatch.StartNew();
 
