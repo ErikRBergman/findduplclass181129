@@ -26,7 +26,7 @@
                     {
                         foreach (var compareStatement in compareFile.Statements)
                         {
-                            if (sourceStatement.StatementText == compareStatement.StatementText)
+                            if (string.Equals(sourceStatement.StatementText, compareStatement.StatementText))
                             {
                                 if (!duplicates.TryGetValue(sourceStatement.StatementText, out var duplicate))
                                 {

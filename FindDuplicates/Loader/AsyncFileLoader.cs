@@ -1,5 +1,6 @@
 ﻿namespace FindDuplicates.Loader
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
@@ -10,19 +11,33 @@
     {
         public async Task<IEnumerable<RawSourceFile>> LoadFilesAsync(IEnumerable<string> filenames, int concurrencyLevel)
         {
-            var queue = new ConcurrentQueue<string>(filenames);
             var bag = new ConcurrentBag<RawSourceFile>();
-            await Task.WhenAll(Enumerable.Range(0, concurrencyLevel).Select(_ => LoadFilesAsync(queue, bag)));
+
+            await this.LoadFilesAsync(
+                filenames, 
+                concurrencyLevel, 
+                rsf =>
+                {
+                    bag.Add(rsf);
+                    return Task.CompletedTask;
+                });
+
             return bag;
         }
 
-        private static async Task LoadFilesAsync(ConcurrentQueue<string> sourceQueue, ConcurrentBag<RawSourceFile> result)
+        public Task LoadFilesAsync(IEnumerable<string> filenames, int concurrencyLevel, Func<RawSourceFile, Task> loadedAction)
+        {
+            var queue = new ConcurrentQueue<string>(filenames);
+            return Task.WhenAll(Enumerable.Range(0, concurrencyLevel).Select(_ => LoadFilesAsync(queue, loadedAction)));
+        }
+
+        private static async Task LoadFilesAsync(ConcurrentQueue<string> sourceQueue, Func<RawSourceFile, Task> loadedAction)
         {
             while (sourceQueue.TryDequeue(out var filename))
             {
                 using (var sourceReader = File.OpenText(filename))
                 {
-                    result.Add(new RawSourceFile
+                    await loadedAction(new RawSourceFile
                                    {
                                        Content = await sourceReader.ReadToEndAsync(),
                                        FullPath = filename
