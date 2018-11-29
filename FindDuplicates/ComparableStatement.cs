@@ -6,6 +6,15 @@
 
         public int Position { get; set; }
 
-        public string Statement { get; set; }
+        public int ScopeLevel { get; set; }
+
+        public string StatementText { get; set; }
+
+        public ComparableStatement ParentStatement { get; set; }
+
+        public override string ToString()
+        {
+            return this.StatementText;
+        }
     }
 }
