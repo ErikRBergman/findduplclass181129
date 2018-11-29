@@ -7,6 +7,9 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    //var loader = new AsyncFileLoader();
+    //var rawFiles = (await loader.LoadAllFilesAsync(@"C:\projects\linux", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10)).ToArray();
+
     public class AsyncFileLoader
     {
         public async Task<IEnumerable<RawSourceFile>> LoadFilesAsync(IEnumerable<string> filenames, int concurrencyLevel)

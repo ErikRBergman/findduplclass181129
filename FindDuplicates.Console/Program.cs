@@ -25,11 +25,8 @@ namespace FindDuplicates.Console
 
             Console.WriteLine($"Loading file data...");
 
-            //var loader = new FileLoader();
-            //var rawFiles = loader.LoadAllFiles(@"C:\projects\linux\drivers", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase)).ToArray();
-
-            var loader = new AsyncFileLoader();
-            var rawFiles = (await loader.LoadAllFilesAsync(@"C:\projects\linux", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase), 10)).ToArray();
+            var loader = new FileLoader();
+            var rawFiles = loader.LoadAllFiles(@"C:\projects\linux", filename => filename.EndsWith(".c", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".h", StringComparison.OrdinalIgnoreCase)).ToArray();
             
             loadFileStopWatch.Stop();
 
