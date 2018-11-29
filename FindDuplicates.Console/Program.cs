@@ -7,6 +7,7 @@ namespace FindDuplicates.Console
     using System.Diagnostics;
     using System.Linq;
 
+    using FindDuplicates.Comparer;
     using FindDuplicates.Loader;
     using FindDuplicates.Parser;
 
@@ -74,74 +75,16 @@ namespace FindDuplicates.Console
 
             var findDuplicatesTimer = Stopwatch.StartNew();
 
-
-            var duplicates = new Dictionary<string, Duplicate>();
-
-            var sourceFileArray = sourceFiles.ToArray();
-            sourceFileArray = sourceFileArray.Take(50).ToArray();
+            var sourceFileArray = sourceFiles.Take(50).ToArray();
 
             Console.WriteLine($"Finding duplicates in {sourceFileArray.Length} files...");
 
-            int uniqueDuplicateStatements = 0;
-            int duplicateStatementInstances = 0;
-
-            for (var i = 0; i < sourceFileArray.Length; i++)
-            {
-                var sourceFile = sourceFileArray[i];
-
-                for (var j = i + 1; j < sourceFileArray.Length; j++)
-                {
-                    var compareFile = sourceFileArray[j];
-
-                    foreach (var sourceStatement in sourceFile.Statements)
-                    {
-                        foreach (var compareStatement in compareFile.Statements)
-                        {
-                            if (sourceStatement.StatementText == compareStatement.StatementText)
-                            {
-                                if (!duplicates.TryGetValue(sourceStatement.StatementText, out var duplicate))
-                                {
-                                    duplicate = new Duplicate()
-                                    {
-                                        Instances = new List<DuplicateInstance>()
-                                    };
-
-                                    uniqueDuplicateStatements++;
-
-                                    duplicates[sourceStatement.StatementText] = duplicate;
-                                }
-
-                                if (!duplicate.Instances.Any(instance => instance.Statements.Any(ii => ii == sourceStatement)))
-                                {
-                                    duplicate.Instances.Add(new DuplicateInstance
-                                    {
-                                        SourceFile = sourceFile,
-                                        Statements = new[] { sourceStatement }
-                                    });
-
-                                    duplicateStatementInstances++;
-                                }
-
-                                if (!duplicate.Instances.Any(instance => instance.Statements.Any(ii => ii == compareStatement)))
-                                {
-                                    duplicate.Instances.Add(new DuplicateInstance
-                                    {
-                                        SourceFile = compareFile,
-                                        Statements = new[] { compareStatement }
-                                    });
-
-                                    duplicateStatementInstances++;
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
+            var sourceComparer = new SourceComparer();
+            var duplicateResult = sourceComparer.FindDuplicates(sourceFileArray);
 
             findDuplicatesTimer.Stop();
 
-            Console.WriteLine($"{uniqueDuplicateStatements} unique duplicate statements found with a total of {duplicateStatementInstances} instance");
+            Console.WriteLine($"{duplicateResult.uniqueDuplicates} unique duplicate statements found with a total of {duplicateResult.duplicateInstances} instance");
 
             Console.WriteLine($"Finding duplicates in {sourceFileArray.Length} files done after {findDuplicatesTimer.ElapsedMilliseconds}ms...");
 
