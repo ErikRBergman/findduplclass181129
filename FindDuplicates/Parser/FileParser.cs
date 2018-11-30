@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class FileParser
     {
@@ -27,6 +29,31 @@
             }
 
             return sourceFiles;
+        }
+
+        public async Task<IEnumerable<SourceFile>> ParseFilesAsync(IEnumerable<RawSourceFile> rawSourceFiles, int concurrencyLevel = -1)
+        {
+            if (concurrencyLevel < 1)
+            {
+                concurrencyLevel = Environment.ProcessorCount * 2;
+            }
+
+            var sourceFileQueue = new ConcurrentQueue<RawSourceFile>(rawSourceFiles);
+            var targetBag = new ConcurrentBag<SourceFile>();
+
+            await Task.WhenAll(Enumerable.Range(0, concurrencyLevel).Select(_ => this.ParseFilesAsync(sourceFileQueue, targetBag)));
+
+            return targetBag;
+        }
+
+        private async Task ParseFilesAsync(ConcurrentQueue<RawSourceFile> rawSourceFiles, ConcurrentBag<SourceFile> target)
+        {
+            await Task.Yield();
+
+            while (rawSourceFiles.TryDequeue(out var result))
+            {
+                target.Add(this.parser.Parse(result));
+            }
         }
     }
 }

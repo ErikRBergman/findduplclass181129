@@ -4,7 +4,7 @@
 
     public class Duplicate
     {
-        public List<DuplicateInstance> Instances { get; set; }
+        public Dictionary<ComparableStatement, DuplicateInstance> Instances { get; set; }
 
     }
 }

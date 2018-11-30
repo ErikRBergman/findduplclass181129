@@ -32,17 +32,24 @@
                                 {
                                     duplicate = new Duplicate
                                     {
-                                        Instances = new List<DuplicateInstance>()
+                                        Instances = new Dictionary<ComparableStatement, DuplicateInstance>
+                                        {
+                                            [sourceStatement] = new DuplicateInstance
+                                            {
+                                                SourceFile = sourceFile,
+                                                Statements = new[] { sourceStatement }
+                                            }
+                                        }
                                     };
 
                                     uniqueDuplicateStatements++;
 
                                     duplicates[sourceStatement.StatementText] = duplicate;
                                 }
-
-                                if (!duplicate.Instances.Any(instance => instance.Statements.Any(ii => ii == sourceStatement)))
+                                else if (!duplicate.Instances.ContainsKey(sourceStatement))
                                 {
                                     duplicate.Instances.Add(
+                                        sourceStatement,
                                         new DuplicateInstance
                                         {
                                             SourceFile = sourceFile,
@@ -52,14 +59,15 @@
                                     duplicateStatementInstances++;
                                 }
 
-                                if (!duplicate.Instances.Any(instance => instance.Statements.Any(ii => ii == compareStatement)))
+                                if (!duplicate.Instances.ContainsKey(compareStatement))
                                 {
                                     duplicate.Instances.Add(
+                                        compareStatement,
                                         new DuplicateInstance
-                                        {
-                                            SourceFile = compareFile,
-                                            Statements = new[] { compareStatement }
-                                        });
+                                            {
+                                                SourceFile = sourceFile,
+                                                Statements = new[] { compareStatement }
+                                            });
 
                                     duplicateStatementInstances++;
                                 }

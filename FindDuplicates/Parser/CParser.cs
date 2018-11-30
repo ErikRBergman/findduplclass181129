@@ -157,14 +157,30 @@
 
         private static IEnumerable<SourceLine> GetSourceLines(RawSourceFile rawSourceFile)
         {
-            var lines = rawSourceFile.Content.Split("\r\n")
-                .Select(
-                    (text, lineNumber) => new SourceLine
-                    {
-                        LineNumber = lineNumber,
-                        Text = text
-                    });
-            return lines;
+            var lines = rawSourceFile.Content.Split("\r\n");
+
+            var sourceLines = new SourceLine[lines.Length];
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                sourceLines[i] = new SourceLine
+                {
+                    LineNumber = i,
+                    Text = lines[i]
+                };
+            }
+
+            return sourceLines;
+
+            ////var lines = rawSourceFile.Content.Split("\r\n")
+            ////    .Select(
+            ////        (text, lineNumber) => new SourceLine
+            ////        {
+            ////            LineNumber = lineNumber,
+            ////            Text = text
+            ////        });
+            ////return lines;
+            /// 
         }
     }
 }
